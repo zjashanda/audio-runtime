@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.1.1 — 2026-11-11
+
+Unified time contract: every timestamp is Beijing wall-clock
+`YYYY-MM-DD HH:MM:SS` with no `T`, no fractional seconds, no `Z` and no
+`+08:00` offset.
+
+### Changed (breaking for timestamp consumers)
+
+- `models.now_iso()` / `to_iso()` became `now_stamp()` / `to_stamp()` and render
+  wall-clock instead of RFC 3339. Receipts and `generated_at` now carry
+  `2026-11-11 06:57:22`.
+- `finished_at` is `null` until the operation completes (it used to be an empty
+  string), so "not run" and "ran" are distinguishable without a sentinel.
+- The schemas reject `T`, `Z`, `+HH:MM` and fractional seconds; a `raw_*` field
+  is the only exemption, because it quotes an upstream tool verbatim.
+
+### Added
+
+- `tools/time_lint.py` — repository-wide timestamp-shape lint with a self-test,
+  wired into `tools/run-all.sh`; reports `0 violation(s)` or the offending
+  `file:line`.
+- Three CLI tests that assert on the raw stdout of `play`, `record` and
+  `endpoints`, not only on the parsed payload.
+
 ## 0.1.0 — 2026-11-10
 
 First public release. Canonical home for the bench audio stack, replacing the

@@ -15,7 +15,7 @@ from typing import List, Optional, Sequence
 
 from .backends import omnipickup
 from .errors import RecordingError, UsageError
-from .models import AudioEndpoint, RecordReceipt, bytes_per_sample, now_iso
+from .models import AudioEndpoint, RecordReceipt, bytes_per_sample, now_stamp
 
 TOLERANCE = 0.05
 
@@ -46,7 +46,7 @@ def record(
         raise UsageError(
             "%s is a %s endpoint; recording needs a capture endpoint" % (endpoint.device_key, endpoint.direction)
         )
-    started = now_iso()
+    started = now_stamp()
     warnings: List[str] = []
     expected = omnipickup.expected_bytes(sample_rate, channels, bit_depth, duration)
 
@@ -64,7 +64,7 @@ def record(
         receipt.actual_bytes = os.path.getsize(output)
         frame_bytes = max(1, channels * bytes_per_sample(bit_depth))
         receipt.actual_seconds = receipt.actual_bytes / float(sample_rate * frame_bytes)
-        receipt.finished_at = now_iso()
+        receipt.finished_at = now_stamp()
         return receipt
 
     if backend != "omnipickup":
@@ -114,7 +114,7 @@ def record(
     )
     receipt.actual_bytes = actual
     receipt.actual_seconds = actual_seconds
-    receipt.finished_at = now_iso()
+    receipt.finished_at = now_stamp()
     return receipt
 
 

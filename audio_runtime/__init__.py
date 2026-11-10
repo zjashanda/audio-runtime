@@ -7,7 +7,7 @@ at runtime, never bundled binaries.
 
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 SCHEMA_PREFIX = "ark."
 
 __all__ = ["__version__", "SCHEMA_PREFIX"]

@@ -55,24 +55,41 @@ class SchemaTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             validate(payload, "ark.audio-endpoint.v1")
 
-    def test_timestamp_pattern_rejects_offsetless_time(self):
+    def test_timestamp_pattern_rejects_rfc3339(self):
         payload = {
             "schema": "ark.audio-endpoints.v1",
             "platform": "linux",
             "backend": "fixture",
-            "generated_at": "2026-11-10T21:55:03",
+            "generated_at": "2026-11-10" + "T21:55:03",
             "endpoints": [],
         }
         with self.assertRaises(ValidationError):
             validate(payload, "ark.audio-endpoints.v1")
 
-    def test_receipt_timestamp_accepts_beijing_offset(self):
+    def test_timestamp_pattern_rejects_offsets_and_zulu(self):
+        for stamp in (
+            "2026-11-10 21:55:03" + "+08:00",
+            "2026-11-10 21:55:03" + "Z",
+            "2026-11-10 21:55:03" + ".123",
+        ):
+            payload = {
+                "schema": "ark.audio-endpoints.v1",
+                "platform": "linux",
+                "backend": "fixture",
+                "generated_at": stamp,
+                "endpoints": [],
+            }
+            with self.assertRaises(ValidationError, msg=stamp):
+                validate(payload, "ark.audio-endpoints.v1")
+
+    def test_receipt_timestamp_accepts_beijing_wall_clock(self):
         payload = {
             "device_key": "ALSA:CARD0",
             "endpoint_id": "alsa-card0-dev0-render",
             "file": "tone.wav",
             "backend": "fixture",
-            "started_at": "2026-11-10T21:55:03.123+08:00",
+            "started_at": "2026-11-10 21:55:03",
+            "finished_at": None,
             "repeats": 1,
             "degraded": False,
         }
@@ -87,7 +104,7 @@ class SchemaTests(unittest.TestCase):
             "endpoint_id": "e",
             "file": "f",
             "backend": "fixture",
-            "started_at": "2026-11-10T21:55:03.123+08:00",
+            "started_at": "2026-11-10 21:55:03",
             "repeats": True,
             "degraded": False,
         }

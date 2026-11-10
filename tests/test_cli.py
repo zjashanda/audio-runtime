@@ -315,6 +315,54 @@ class ConvertTests(CliTestCase):
         self.assertEqual(payload["channels"], 2)
 
 
+class TimeContractTests(CliTestCase):
+    """The raw stdout of a real command must obey the wall-clock contract.
+
+    Asserting on the rendered text (not only on the parsed dict) is deliberate:
+    a consumer reads the bytes, and a stray ``T`` or offset in the payload is
+    exactly what the contract forbids.
+    """
+
+    def assertWallClockOnly(self, text: str) -> None:
+        self.assertNotRegex(text, r"\d{4}-\d{2}-\d{2}T\d{2}:")
+        self.assertNotRegex(text, r"\d{2}:\d{2}:\d{2}Z")
+        self.assertNotRegex(text, r"\d{2}:\d{2}:\d{2}\.\d+")
+        self.assertNotRegex(text, r"\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}")
+
+    def test_play_receipt_is_beijing_wall_clock(self) -> None:
+        code, out, _ = self.run_cli(
+            ["play", "--backend", "fixture", "--fixture", FIXTURE,
+             "--device", "ALSA:CARD1", "--audio-file", make_wav(self.path("t.wav")),
+             "--format", "json"]
+        )
+
+        self.assertEqual(code, 0)
+        self.assertIn('"started_at"', out)
+        self.assertWallClockOnly(out)
+        self.assertRegex(out, r'"started_at": "\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"')
+
+    def test_endpoints_payload_is_beijing_wall_clock(self) -> None:
+        code, out, _ = self.run_cli(
+            ["endpoints", "--backend", "fixture", "--fixture", FIXTURE, "--format", "json"]
+        )
+
+        self.assertEqual(code, 0)
+        self.assertWallClockOnly(out)
+        self.assertRegex(out, r'"generated_at": "\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"')
+
+    def test_record_receipt_is_beijing_wall_clock(self) -> None:
+        target = self.path("stamp.pcm")
+        code, out, _ = self.run_cli(
+            ["record", "--backend", "fixture", "--fixture", FIXTURE,
+             "--device", "ALSA:CARD1:IN", "--output", target, "--duration", "0.05",
+             "--sample-rate", "8000", "--channels", "1", "--format", "json"]
+        )
+
+        self.assertEqual(code, 0)
+        self.assertWallClockOnly(out)
+        self.assertRegex(out, r'"finished_at": "\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"')
+
+
 class ProcessLevelTests(CliTestCase):
     def test_version_exits_zero(self) -> None:
         with self.assertRaises(SystemExit) as caught, contextlib.redirect_stdout(io.StringIO()):

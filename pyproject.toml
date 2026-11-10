@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ark-audio-runtime"
-version = "0.1.0"
+version = "0.1.1"
 description = "Canonical audio I/O layer: endpoint discovery, ffprobe media inspection, playback, recording and format conversion for Ark bench skills"
 readme = "README.md"
 requires-python = ">=3.9"

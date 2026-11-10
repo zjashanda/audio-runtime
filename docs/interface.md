@@ -13,17 +13,21 @@ shipped) and never owns credentials.
 
 ## Timestamps
 
-Every timestamp is Beijing time with an explicit `+08:00` offset and exactly
-milliseconds:
+Every timestamp is Beijing wall-clock in exactly one shape:
 
 ```
-2026-11-10T21:55:03.123+08:00
+2026-11-11 06:57:22
 ```
 
-Offset-less timestamps are rejected by the schemas on purpose: a receipt that
-crosses machines must not be ambiguous about its zone. `started_at` is stamped
-before the device is touched; `finished_at` after the operation ends (empty for
-dry runs unless the operation completed a plan).
+No `T` separator, no fractional seconds, no `Z`, no `+08:00` offset — the
+schemas reject all four, and `tools/time_lint.py` rejects them anywhere in the
+repository. The reason is diffability: two nodes' receipts are compared line by
+line, and a mixed-format log forces every consumer to normalise before it can
+compare, which is exactly the bug this contract removes.
+
+`started_at` is stamped before the device is touched; `finished_at` after the
+operation ends (`null` when nothing ran, e.g. a dry run). The one exemption is a
+`raw_*` field, which quotes an upstream tool's own string verbatim.
 
 ## Device keys
 
@@ -224,5 +228,8 @@ so a script can parse the payload while a human still sees what to do next.
 
 ## Stability
 
-`v0.1.0` publishes the schemas above. Adding a field is a minor change; removing
-or retyping a field, or changing a `device_key` derivation rule, is a major one.
+`v0.1.1` publishes the schemas above. Adding a field is a minor change; removing
+or retyping a field, changing a timestamp shape, or changing a `device_key`
+derivation rule, is a major one. The timestamp shape changed in `0.1.1`
+(RFC 3339 → Beijing wall-clock), which is why that release is marked breaking
+for timestamp consumers.

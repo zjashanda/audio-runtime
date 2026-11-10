@@ -2,8 +2,12 @@
 
 All of them are dataclasses with an explicit ``to_dict`` so the JSON written to
 stdout is stable, ordered and free of tuples/objects a consumer cannot parse.
-Timestamps are always Beijing time with an explicit ``+08:00`` offset: a bench
-log without an offset is ambiguous the moment two nodes are compared.
+Timestamps are Beijing wall-clock, rendered as ``YYYY-MM-DD HH:MM:SS`` with no
+``T`` separator, no fractional seconds, no ``Z`` and no ``+08:00`` offset. That
+is the workspace-wide time contract: every node prints Beijing time the same way
+so two machines' logs diff line by line instead of differing in formatting. A
+``raw_*`` field is the one exception, because it quotes what an upstream tool
+reported verbatim.
 """
 
 from __future__ import annotations
@@ -13,6 +17,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 BEIJING = timezone(timedelta(hours=8), name="CST")
+TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def now() -> datetime:
@@ -20,17 +25,18 @@ def now() -> datetime:
     return datetime.now(BEIJING)
 
 
-def now_iso() -> str:
-    """ISO-8601 with milliseconds and an explicit +08:00 offset."""
-    return now().isoformat(timespec="milliseconds")
+def now_stamp() -> str:
+    """Current Beijing wall-clock time as ``YYYY-MM-DD HH:MM:SS``."""
+    return now().strftime(TIMESTAMP_FORMAT)
 
 
-def to_iso(value: Optional[datetime]) -> Optional[str]:
+def to_stamp(value: Optional[datetime]) -> Optional[str]:
+    """Render any datetime as Beijing wall-clock, dropping sub-second precision."""
     if value is None:
         return None
     if value.tzinfo is None:
         value = value.replace(tzinfo=BEIJING)
-    return value.isoformat(timespec="milliseconds")
+    return value.astimezone(BEIJING).strftime(TIMESTAMP_FORMAT)
 
 
 RENDER = "render"
@@ -156,7 +162,7 @@ class PlayReceipt:
     file: str
     backend: str
     started_at: str
-    finished_at: str = ""
+    finished_at: Optional[str] = None
     duration_seconds: float = 0.0
     repeats: int = 1
     exit_code: int = 0
@@ -190,7 +196,7 @@ class RecordReceipt:
     output: str
     backend: str
     started_at: str
-    finished_at: str = ""
+    finished_at: Optional[str] = None
     sample_rate: int = 0
     channels: int = 0
     bit_depth: int = 0
@@ -230,7 +236,7 @@ class ConvertReceipt:
     source: str
     target: str
     started_at: str
-    finished_at: str = ""
+    finished_at: Optional[str] = None
     sample_rate: int = 0
     channels: int = 0
     codec: str = ""

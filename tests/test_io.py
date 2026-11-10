@@ -68,7 +68,9 @@ class PlayTests(IoTestCase):
         self.assertFalse(receipt.degraded)
         self.assertEqual(receipt.command[0], "fixture-play")
         self.assertIn("ALSA:CARD1", receipt.command)
-        self.assertRegex(receipt.started_at, r"\+08:00$")
+        self.assertRegex(receipt.started_at, r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$")
+        self.assertNotIn("T", receipt.started_at)
+        self.assertNotIn("+", receipt.started_at)
 
     def test_repeat_count_is_honoured_and_reported(self) -> None:
         receipt = play(self.endpoint("ALSA:CARD1"), self.wav, backend="fixture", repeat=3)
@@ -151,7 +153,8 @@ class RecordTests(IoTestCase):
         self.assertEqual(receipt.expected_bytes, int(expected))
         self.assertEqual(receipt.actual_bytes, int(expected))
         self.assertAlmostEqual(receipt.actual_seconds, 0.25, places=3)
-        self.assertRegex(receipt.finished_at, r"\+08:00$")
+        self.assertRegex(receipt.finished_at, r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$")
+        self.assertNotIn("T", receipt.finished_at)
 
     def test_fixture_recording_needs_a_finite_duration(self) -> None:
         with self.assertRaises(UsageError):

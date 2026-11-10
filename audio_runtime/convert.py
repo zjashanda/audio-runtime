@@ -13,7 +13,7 @@ import subprocess
 from typing import List, Optional, Sequence
 
 from .errors import ConversionError, UsageError
-from .models import ConvertReceipt, now_iso
+from .models import ConvertReceipt, now_stamp
 
 TARGET_RATE = 44100
 TARGET_CHANNELS = 2
@@ -82,7 +82,7 @@ def convert(
     receipt = ConvertReceipt(
         source=source,
         target=target,
-        started_at=now_iso(),
+        started_at=now_stamp(),
         sample_rate=sample_rate,
         channels=channels,
         codec=codec,
@@ -99,7 +99,7 @@ def convert(
         raise ConversionError("ffmpeg exceeded %.0fs" % timeout)
     receipt.exit_code = completed.returncode
     receipt.stderr_tail = (completed.stderr or "").strip()[-800:]
-    receipt.finished_at = now_iso()
+    receipt.finished_at = now_stamp()
     if completed.returncode != 0:
         raise ConversionError(
             "ffmpeg exited %d converting %s" % (completed.returncode, source),

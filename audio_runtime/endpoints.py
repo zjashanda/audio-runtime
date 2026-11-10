@@ -335,16 +335,16 @@ def discover(
         "platform": resolved_platform,
         "backend": chosen,
         "direction": direction,
-        "generated_at": _now_iso(),
+        "generated_at": _now_stamp(),
         "endpoints": [entry.to_dict() for entry in entries],
         "warnings": warnings,
     }
 
 
-def _now_iso() -> str:
-    from .models import now_iso
+def _now_stamp() -> str:
+    from .models import now_stamp
 
-    return now_iso()
+    return now_stamp()
 
 
 def find(entries: Iterable[AudioEndpoint], query: str, direction: Optional[str] = None) -> AudioEndpoint:

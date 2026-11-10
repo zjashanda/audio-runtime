@@ -53,7 +53,8 @@ repository references them by name and reports their absence loudly. The same
 rule is why nothing here needs a virtual environment inside the checkout.
 
 **Receipts instead of log lines.** Every operation returns a JSON receipt
-carrying the device key, the exact argv that ran, Beijing timestamps, byte
+carrying the device key, the exact argv that ran, Beijing timestamps
+(`YYYY-MM-DD HH:MM:SS`, no `T`, no offset), byte
 counts and warnings. A test case attaches the receipt and the result is
 reviewable later without reproducing the bench. See
 [`docs/interface.md`](docs/interface.md) for the full contract, including the

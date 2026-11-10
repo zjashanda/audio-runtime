@@ -50,13 +50,17 @@ def _endpoint_props() -> Dict[str, Any]:
 
 def _receipt_common() -> Dict[str, Any]:
     return {
-        "started_at": {"type": "string", "pattern": r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{2}:\d{2}$"},
-        "finished_at": {"type": ["string", "null"]},
+        "started_at": {"type": "string", "pattern": TIMESTAMP_PATTERN},
+        "finished_at": {"type": ["string", "null"], "pattern": TIMESTAMP_PATTERN},
         "exit_code": {"type": "integer"},
         "command": {"type": "array", "items": {"type": "string"}},
         "warnings": {"type": "array", "items": {"type": "string"}},
     }
 
+
+# Beijing wall-clock, no T separator, no fractional seconds, no Z, no offset.
+# Anything else is a contract violation, not a style preference.
+TIMESTAMP_PATTERN = r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$"
 
 SCHEMAS: Dict[str, Dict[str, Any]] = {
     _ERROR: {
@@ -88,10 +92,7 @@ SCHEMAS: Dict[str, Dict[str, Any]] = {
             "platform": {"type": "string"},
             "backend": {"type": "string"},
             "direction": {"type": "string", "enum": ["all", "render", "capture"]},
-            "generated_at": {
-                "type": "string",
-                "pattern": r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{2}:\d{2}$",
-            },
+            "generated_at": {"type": "string", "pattern": TIMESTAMP_PATTERN},
             "endpoints": {"type": "array", "items": {"type": "object"}},
             "warnings": {"type": "array", "items": {"type": "string"}},
         },

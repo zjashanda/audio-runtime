@@ -102,6 +102,18 @@ else
   fail "convert dry run"
 fi
 
+step "time contract lint"
+if python3 tools/time_lint.py --self-test; then
+  echo "PASS: time lint self-test"
+else
+  fail "time lint self-test"
+fi
+if python3 tools/time_lint.py; then
+  echo "PASS: time lint"
+else
+  fail "time lint"
+fi
+
 step "secret scan self-test"
 if python3 tools/secret_scan.py --self-test; then
   echo "PASS: secret scan self-test"

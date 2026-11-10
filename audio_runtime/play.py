@@ -17,7 +17,7 @@ from typing import List, Optional, Sequence
 from .backends import PlaybackBackend, PlayInvocation, resolve_backend
 from .endpoints import require_explicit_default
 from .errors import BackendUnavailable, UsageError
-from .models import AudioEndpoint, PlayReceipt, now_iso
+from .models import AudioEndpoint, PlayReceipt, now_stamp
 from .probe import read_wav_format
 
 
@@ -71,7 +71,7 @@ def play(
     if not dry_run and backend != "fixture" and not implementation.available():
         raise BackendUnavailable("backend %s is not available on this host" % implementation.name)
 
-    started = now_iso()
+    started = now_stamp()
     warnings: List[str] = []
     degraded = False
     command: Sequence[str] = []
@@ -107,7 +107,7 @@ def play(
         file=path,
         backend=implementation.name,
         started_at=started,
-        finished_at=now_iso(),
+        finished_at=now_stamp(),
         duration_seconds=elapsed,
         repeats=repeat,
         exit_code=exit_code,
