@@ -1,0 +1,57 @@
+{
+  "platform": "linux",
+  "note": "Recorded from 'aplay -l' / 'arecord -l' on a Linux bench node with one onboard and one USB codec.",
+  "endpoints": [
+    {
+      "endpoint_id": "alsa-card0-dev0-render",
+      "device_key": "ALSA:CARD0",
+      "direction": "render",
+      "platform": "linux",
+      "name": "ALC257 Analog",
+      "channels": 2,
+      "default_sample_rate": 44100,
+      "host_api": "ALSA",
+      "backend_target": "plughw:PCH,0",
+      "provider": "PCH",
+      "interface": "plughw:PCH,0",
+      "card_index": 0,
+      "pcm_device": 0,
+      "is_default": true,
+      "source": "alsa"
+    },
+    {
+      "endpoint_id": "alsa-card1-dev0-render",
+      "device_key": "ALSA:CARD1",
+      "direction": "render",
+      "platform": "linux",
+      "name": "USB Audio Device",
+      "channels": 2,
+      "default_sample_rate": 48000,
+      "host_api": "ALSA",
+      "backend_target": "plughw:Device,0",
+      "provider": "Device",
+      "interface": "plughw:Device,0",
+      "card_index": 1,
+      "pcm_device": 0,
+      "is_default": false,
+      "source": "alsa"
+    },
+    {
+      "endpoint_id": "alsa-card1-dev0-capture",
+      "device_key": "ALSA:CARD1:IN",
+      "direction": "capture",
+      "platform": "linux",
+      "name": "USB Audio Device",
+      "channels": 1,
+      "default_sample_rate": 48000,
+      "host_api": "ALSA",
+      "backend_target": "plughw:Device,0",
+      "provider": "Device",
+      "interface": "plughw:Device,0",
+      "card_index": 1,
+      "pcm_device": 0,
+      "is_default": true,
+      "source": "alsa"
+    }
+  ]
+}

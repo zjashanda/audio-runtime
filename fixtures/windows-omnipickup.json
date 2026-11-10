@@ -1,0 +1,51 @@
+{
+  "platform": "windows",
+  "note": "Recorded from 'OmniPickup --list-devices' on a ListenAI bench node. Endpoint ids are per-run; device_key is the stable identity.",
+  "endpoints": [
+    {
+      "endpoint_id": "omnipickup-12-render",
+      "device_key": "WASAPI:SPEAKERS-LISTENAI-AUDIO",
+      "direction": "render",
+      "platform": "windows",
+      "name": "扬声器 (ListenAI Audio)",
+      "channels": 2,
+      "default_sample_rate": 44100,
+      "host_api": "WASAPI",
+      "backend_target": "12",
+      "provider": "ListenAI",
+      "interface": "MMDEVAPI",
+      "is_default": true,
+      "source": "omnipickup"
+    },
+    {
+      "endpoint_id": "omnipickup-32-capture",
+      "device_key": "VID_2886&PID_0018",
+      "direction": "capture",
+      "platform": "windows",
+      "name": "麦克风 (ListenAI Audio) (VID_2886&PID_0018)",
+      "channels": 8,
+      "default_sample_rate": 16000,
+      "host_api": "WASAPI",
+      "backend_target": "32",
+      "provider": "ListenAI",
+      "interface": "USB",
+      "is_default": true,
+      "source": "omnipickup"
+    },
+    {
+      "endpoint_id": "omnipickup-3-capture",
+      "device_key": "WASAPI:MIC-REALTEK-AUDIO",
+      "direction": "capture",
+      "platform": "windows",
+      "name": "麦克风 (Realtek(R) Audio)",
+      "channels": 2,
+      "default_sample_rate": 48000,
+      "host_api": "WASAPI",
+      "backend_target": "3",
+      "provider": "Realtek",
+      "interface": "HDAUDIO",
+      "is_default": false,
+      "source": "omnipickup"
+    }
+  ]
+}

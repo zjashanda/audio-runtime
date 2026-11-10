@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ark-audio-runtime"
+version = "0.1.0"
+description = "Canonical audio I/O layer: endpoint discovery, ffprobe media inspection, playback, recording and format conversion for Ark bench skills"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Ark / zjashanda" }]
+keywords = ["audio", "ffmpeg", "ffprobe", "playback", "recording", "windows", "linux", "ark"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = []
+
+[project.scripts]
+audio-runtime = "audio_runtime.cli:main"
+
+[tool.setuptools]
+packages = [
+  "audio_runtime",
+  "audio_runtime.backends",
+]
+
+[tool.setuptools.package-data]
+audio_runtime = ["py.typed"]
